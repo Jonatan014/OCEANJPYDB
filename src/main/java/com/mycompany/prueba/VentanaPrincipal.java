@@ -24,12 +24,11 @@ public class VentanaPrincipal extends JFrame {
     private AnalizadorSemantico as = new AnalizadorSemantico();
 
     public VentanaPrincipal() {
-        setTitle("Analizador Léxico y Semántico");
+        setTitle("OceanJpy++#DBjsNativeShell on rails");
         setSize(900, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // 🔹 PANEL 1 (Entrada)
         JPanel panelEntrada = new JPanel(new BorderLayout());
         panelEntrada.setBorder(BorderFactory.createTitledBorder("Código"));
 
@@ -41,7 +40,6 @@ public class VentanaPrincipal extends JFrame {
         panelEntrada.add(scrollCodigo, BorderLayout.CENTER);
         panelEntrada.add(btnAnalizar, BorderLayout.SOUTH);
 
-        // 🔹 PANEL 2 (Tabla de tokens)
         JPanel panelTabla = new JPanel(new BorderLayout());
         panelTabla.setBorder(BorderFactory.createTitledBorder("Tabla de Tokens"));
 
@@ -50,7 +48,6 @@ public class VentanaPrincipal extends JFrame {
 
         panelTabla.add(scrollTabla, BorderLayout.CENTER);
 
-        // 🔹 PANEL 3 (Resultados)
         JPanel panelResultados = new JPanel(new BorderLayout());
         panelResultados.setBorder(BorderFactory.createTitledBorder("Resultados"));
 
@@ -60,16 +57,13 @@ public class VentanaPrincipal extends JFrame {
 
         panelResultados.add(scrollResultados, BorderLayout.CENTER);
 
-        // 🔹 Panel superior (divide entrada y tabla)
         JSplitPane splitSuperior = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panelEntrada, panelTabla);
         splitSuperior.setDividerLocation(400);
 
-        // 🔹 Panel principal
         add(splitSuperior, BorderLayout.CENTER);
         add(panelResultados, BorderLayout.SOUTH);
         panelResultados.setPreferredSize(new Dimension(800, 150));
 
-        // 🔥 EVENTO BOTÓN
         btnAnalizar.addActionListener(e -> analizarCodigo());
 
         setVisible(true);
@@ -79,10 +73,8 @@ public class VentanaPrincipal extends JFrame {
         String codigo = txtCodigo.getText();
 
         try {
-            // 🔹 Análisis léxico
             ArrayList<Token> tokens = al.analizar(codigo);
 
-            // 🔹 Llenar tabla
             DefaultTableModel modelo = new DefaultTableModel();
             modelo.addColumn("Tipo");
             modelo.addColumn("Lexema");
@@ -94,7 +86,6 @@ public class VentanaPrincipal extends JFrame {
 
             tablaTokens.setModel(modelo);
 
-            // 🔹 Análisis semántico
             String resultado = as.analizar(tokens);
 txtResultados.setText(resultado.isEmpty() ? "Análisis correcto" : resultado);
 

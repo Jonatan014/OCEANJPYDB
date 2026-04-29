@@ -10,7 +10,7 @@ package com.mycompany.prueba;
  */
 
 public enum TipoDato {
-    TRUCHA,   // String
-    CAMARON,  // int
-    SALMON    // double
+    TRUCHA,
+    CAMARON, 
+    SALMON  
 }

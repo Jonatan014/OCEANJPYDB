@@ -6,10 +6,9 @@ package com.mycompany.prueba;
 
 /**
  *
- * @author jonat
+ * @author jarqu
  */
 
-import com.sun.org.apache.xpath.internal.compiler.Token;
 import java.util.ArrayList;
 
 public class AnalizadorLexico {
@@ -25,16 +24,13 @@ public class AnalizadorLexico {
         for (int i = 0; i < codigo.length(); i++) {
             char c = codigo.charAt(i);
 
-            // Saltos de línea
             if (c == '\n') {
                 linea++;
                 continue;
             }
 
-            // Espacios
             if (Character.isWhitespace(c)) continue;
 
-            // Letras → identificadores o tipos
             if (Character.isLetter(c)) {
                 String lexema = "";
 
@@ -61,7 +57,7 @@ public class AnalizadorLexico {
                 }
             }
 
-            // Números
+            
             else if (Character.isDigit(c)) {
                 String numero = "";
                 boolean decimal = false;
@@ -85,7 +81,7 @@ public class AnalizadorLexico {
                 tokens.add(new Token("NUMERO", numero, linea));
             }
 
-            // Strings
+            
             else if (c == '"') {
                 String texto = "";
                 i++;
@@ -98,8 +94,6 @@ public class AnalizadorLexico {
                 tokens.add(new Token("STRING", texto, linea));
             }
 
-            // Operadores
-            // Operadores personalizados
             else if (c == '~') {
                 tokens.add(new Token("OPERADOR", "~", linea));
             }
@@ -116,7 +110,6 @@ public class AnalizadorLexico {
                 tokens.add(new Token("OPERADOR", "%", linea));
             }
 
-            // Delimitadores
             else if (c == ';') {
                 tokens.add(new Token("DELIMITADOR", ";", linea));
             }
@@ -125,7 +118,6 @@ public class AnalizadorLexico {
                 tokens.add(new Token("DELIMITADOR", String.valueOf(c), linea));
             }
 
-            // Error
             else {
                 tokens.add(new Token("ERROR", String.valueOf(c), linea));
             }

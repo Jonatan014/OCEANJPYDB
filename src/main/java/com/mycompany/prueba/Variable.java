@@ -6,7 +6,7 @@ package com.mycompany.prueba;
 
 /**
  *
- * @author jonat
+ * @author jarqu
  */
 
 public class Variable {

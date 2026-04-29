@@ -16,7 +16,6 @@ private TablaSimbolos tabla;
 
             Token t = tokens.get(i);
 
-            // Detectar declaración: TIPO_DATO IDENTIFICADOR = VALOR ;
             if (t.tipo.equals("TIPO_DATO")) {
 
     try {
@@ -40,7 +39,6 @@ private TablaSimbolos tabla;
 
         Object resultado;
 
-        // 🔥 detectar si es expresión
         if (i + 4 < tokens.size() && tokens.get(i + 4).tipo.equals("OPERADOR")) {
 
             int inicioExp = i + 3;
@@ -52,7 +50,7 @@ private TablaSimbolos tabla;
 
             resultado = evaluarExpresion(tokens, inicioExp, finExp - 1);
 
-            i = finExp; // saltar hasta ;
+            i = finExp;
 
         } else {
 
@@ -67,7 +65,6 @@ private TablaSimbolos tabla;
             i += 4;
         }
 
-        // ✅ SOLO UNA VEZ
         tabla.agregar(new Variable(identificador.lexema, tipo, resultado));
 
     } catch (IndexOutOfBoundsException e) {
@@ -105,7 +102,6 @@ private TablaSimbolos tabla;
             throw new ErrorSemantico("Variable no declarada: " + id.lexema);
         }
 
-        // 🔥 GUARDAR RESULTADO PARA LA INTERFAZ
         salida.append(var.valor).append("\n");
 
         i += 4;
