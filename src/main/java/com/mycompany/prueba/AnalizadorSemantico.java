@@ -140,15 +140,28 @@ private TablaSimbolos tabla;
                 try {
                     return Integer.parseInt(valor.lexema);
                 } catch (NumberFormatException e) {
-                    throw new ErrorSemantico("Error: Camaron solo acepta enteros (linea " + valor.linea + ")");
+                    throw new ErrorSemantico("Error: camaron solo acepta enteros (linea " + valor.linea + ")");
                 }
 
             case SALMON:
-                try {
-                    return Double.parseDouble(valor.lexema);
-                } catch (NumberFormatException e) {
-                    throw new ErrorSemantico("Error: Salmon solo acepta decimales (linea " + valor.linea + ")");
+                String numero = valor.lexema;
+                
+                if (!numero.matches("\\d+\\.\\d+")) {
+                    throw new ErrorSemantico(
+                        "Error: salmon solo acepta decimales con formato 0.0 (linea " 
+                        + valor.linea + ")"
+                    );
                 }
+                else if(!numero.matches("\\d+\\.\\d{1,8}")){
+                    throw new ErrorSemantico(
+                        "Error: salmon solo acepta hasta 8 digitos (linea " 
+                        + valor.linea + ")"
+                    );
+                }
+                
+                
+
+                return Double.parseDouble(numero);
         }
 
         return null;
