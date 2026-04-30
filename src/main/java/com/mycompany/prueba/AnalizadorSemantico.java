@@ -22,7 +22,18 @@ private TablaSimbolos tabla;
         Token identificador = tokens.get(i + 1);
         Token operador = tokens.get(i + 2);
         Token valor = tokens.get(i + 3);
+        
+        if (i + 3 < tokens.size()) {
+            Token siguiente = tokens.get(i + 3);
 
+            if (siguiente.tipo.equals("OPERADOR")) {
+                throw new ErrorSemantico(
+                    "Operador inválido '" + operador.lexema + siguiente.lexema +
+                    "' en linea " + t.linea
+                );
+            }
+        }
+        
         if (!identificador.tipo.equals("IDENTIFICADOR")) {
             throw new ErrorSemantico("Se esperaba identificador en linea " + t.linea);
         }
@@ -141,7 +152,6 @@ private TablaSimbolos tabla;
         case CAMARON:
             String aux = valor.lexema;
 
-            // Permite hasta 10 dígitos (opcionalmente negativo)
             if (!aux.matches("-?\\d{1,10}")) {
                 throw new ErrorSemantico(
                     "Error: camaron solo puede tener hasta 10 digitos enteros (linea "
