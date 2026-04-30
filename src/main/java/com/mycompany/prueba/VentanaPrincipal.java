@@ -47,6 +47,40 @@ public class VentanaPrincipal extends JFrame {
         JScrollPane scrollTabla = new JScrollPane(tablaTokens);
 
         panelTabla.add(scrollTabla, BorderLayout.CENTER);
+        JTextArea txtAyuda = new JTextArea();
+        txtAyuda.setEditable(false);
+        txtAyuda.setFont(new Font("Monospaced", Font.PLAIN, 12));
+
+        txtAyuda.setText("""
+        === SIMBOLOGÍA DEL LENGUAJE ===
+
+        TIPOS DE DATO:
+        trucha  → String (texto)
+        camaron → int (número entero)
+        salmon  → double (decimal)
+
+        OPERADORES:
+        <  → suma (+)
+        >  → resta (-)
+        ~  → asignación (=)
+        $  → multiplicación (*)
+        %  → división (/)
+
+        PALABRA RESERVADA:
+        mostrar → imprime el valor de una variable
+
+        EJEMPLO:
+        salmon p1 ~ 5.0;
+        salmon p2 ~ 3.0;
+        salmon r ~ p1 < p2;
+        mostrar(r);
+        """);
+
+        JScrollPane scrollAyuda = new JScrollPane(txtAyuda);
+        scrollAyuda.setBorder(BorderFactory.createTitledBorder("Ayuda / Lenguaje"));
+        scrollAyuda.setPreferredSize(new Dimension(400, 150));
+
+        panelTabla.add(scrollAyuda, BorderLayout.SOUTH);
 
         JPanel panelResultados = new JPanel(new BorderLayout());
         panelResultados.setBorder(BorderFactory.createTitledBorder("Resultados"));
@@ -78,10 +112,16 @@ public class VentanaPrincipal extends JFrame {
             DefaultTableModel modelo = new DefaultTableModel();
             modelo.addColumn("Tipo");
             modelo.addColumn("Lexema");
-            modelo.addColumn("Línea");
+            modelo.addColumn("Patrón");
+            modelo.addColumn("Reservada");
 
             for (Token t : tokens) {
-                modelo.addRow(new Object[]{t.tipo, t.lexema, t.linea});
+                modelo.addRow(new Object[]{
+                    t.tipo,
+                    t.lexema,
+                    obtenerPatron(t),
+                    esReservada(t)
+                });
             }
 
             tablaTokens.setModel(modelo);
@@ -92,5 +132,20 @@ txtResultados.setText(resultado.isEmpty() ? "Análisis correcto" : resultado);
         } catch (ErrorSemantico ex) {
             txtResultados.setText(ex.getMessage());
         }
+    }
+    private String obtenerPatron(Token t) {
+        switch (t.tipo) {
+            case "TIPO_DATO": return "Trucha|Camaron|Salmon";
+            case "IDENTIFICADOR": return "[a-zA-Z][a-zA-Z0-9]*";
+            case "NUMERO": return "\\d+(\\.\\d+)?";
+            case "STRING": return "\".*\"";
+            case "OPERADOR": return "[~<>$%]";
+            case "DELIMITADOR": return "[();]";
+            case "PALABRA_RESERVADA": return "mostrar";
+            default: return "Desconocido";
+        }
+    }
+    private String esReservada(Token t) {
+        return t.tipo.equals("PALABRA_RESERVADA") ? "Sí" : "No";
     }
 }
