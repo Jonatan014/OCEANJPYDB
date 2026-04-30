@@ -41,9 +41,9 @@ public class AnalizadorLexico {
                 }
                 i--;
 
-                if (lexema.equals("Trucha") ||
-                    lexema.equals("Camaron") ||
-                    lexema.equals("Salmon")) {
+                if (lexema.equals("trucha") ||
+                    lexema.equals("camaron") ||
+                    lexema.equals("salmon")) {
 
                     tokens.add(new Token("TIPO_DATO", lexema, linea));
 

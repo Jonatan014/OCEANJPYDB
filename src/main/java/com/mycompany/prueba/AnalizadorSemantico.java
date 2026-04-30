@@ -119,9 +119,9 @@ private TablaSimbolos tabla;
 
     private TipoDato obtenerTipo(String tipo) {
         switch (tipo) {
-            case "Trucha": return TipoDato.TRUCHA;
-            case "Camaron": return TipoDato.CAMARON;
-            case "Salmon": return TipoDato.SALMON;
+            case "trucha": return TipoDato.TRUCHA;
+            case "camaron": return TipoDato.CAMARON;
+            case "salmon": return TipoDato.SALMON;
             default: return null;
         }
     }
