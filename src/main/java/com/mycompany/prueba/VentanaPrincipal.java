@@ -127,7 +127,7 @@ public class VentanaPrincipal extends JFrame {
             tablaTokens.setModel(modelo);
 
             String resultado = as.analizar(tokens);
-txtResultados.setText(resultado.isEmpty() ? "Análisis correcto" : resultado);
+            txtResultados.setText(resultado.isEmpty() ? "Análisis correcto" : resultado);
 
         } catch (ErrorSemantico ex) {
             txtResultados.setText(ex.getMessage());
@@ -146,6 +146,13 @@ txtResultados.setText(resultado.isEmpty() ? "Análisis correcto" : resultado);
         }
     }
     private String esReservada(Token t) {
-        return t.tipo.equals("PALABRA_RESERVADA") ? "Sí" : "No";
+        if (t.tipo.equals("PALABRA_RESERVADA") ||
+            t.tipo.equals("TIPO_DATO") ||
+            t.tipo.equals("OPERADOR") ||
+            t.tipo.equals("DELIMITADOR")) {
+
+            return "Sí";
+        }
+        return "No";
     }
 }
