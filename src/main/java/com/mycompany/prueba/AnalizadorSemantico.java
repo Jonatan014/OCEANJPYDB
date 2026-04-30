@@ -128,44 +128,58 @@ private TablaSimbolos tabla;
 
     private Object validarValor(TipoDato tipo, Token valor) throws ErrorSemantico {
 
-        switch (tipo) {
+    switch (tipo) {
 
-            case TRUCHA:
-                if (!valor.tipo.equals("STRING")) {
-                    throw new ErrorSemantico("Error: Trucha solo acepta texto (linea " + valor.linea + ")");
-                }
-                return valor.lexema;
+        case TRUCHA:
+            if (!valor.tipo.equals("STRING")) {
+                throw new ErrorSemantico(
+                    "Error: Trucha solo acepta texto (linea " + valor.linea + ")"
+                );
+            }
+            return valor.lexema;
 
-            case CAMARON:
-                try {
-                    return Integer.parseInt(valor.lexema);
-                } catch (NumberFormatException e) {
-                    throw new ErrorSemantico("Error: camaron solo acepta enteros (linea " + valor.linea + ")");
-                }
+        case CAMARON:
+            String aux = valor.lexema;
 
-            case SALMON:
-                String numero = valor.lexema;
-                
-                if (!numero.matches("\\d+\\.\\d+")) {
-                    throw new ErrorSemantico(
-                        "Error: salmon solo acepta decimales con formato 0.0 (linea " 
-                        + valor.linea + ")"
-                    );
-                }
-                else if(!numero.matches("\\d+\\.\\d{1,8}")){
-                    throw new ErrorSemantico(
-                        "Error: salmon solo acepta hasta 8 digitos (linea " 
-                        + valor.linea + ")"
-                    );
-                }
-                
-                
+            // Permite hasta 10 dígitos (opcionalmente negativo)
+            if (!aux.matches("-?\\d{1,10}")) {
+                throw new ErrorSemantico(
+                    "Error: camaron solo puede tener hasta 10 digitos enteros (linea "
+                    + valor.linea + ")"
+                );
+            }
 
+            try {
+                return Integer.parseInt(aux);
+            } catch (NumberFormatException e) {
+                throw new ErrorSemantico(
+                    "Error: camaron solo acepta enteros validos (linea "
+                    + valor.linea + ")"
+                );
+            }
+
+        case SALMON:
+            String numero = valor.lexema;
+
+            if (!numero.matches("\\d+\\.\\d{1,8}")) {
+                throw new ErrorSemantico(
+                    "Error: salmon solo acepta formato decimal (ej: 0.0) y maximo 8 decimales (linea "
+                    + valor.linea + ")"
+                );
+            }
+
+            try {
                 return Double.parseDouble(numero);
-        }
-
-        return null;
+            } catch (NumberFormatException e) {
+                throw new ErrorSemantico(
+                    "Error: valor decimal invalido (linea "
+                    + valor.linea + ")"
+                );
+            }
     }
+
+    return null;
+}
     
     private int prioridad(String op) {
         switch (op) {
