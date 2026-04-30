@@ -5,6 +5,24 @@
     <artifactId>Prueba</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <dependencies>
+
+    <!-- JFlex -->
+    <dependency>
+        <groupId>de.jflex</groupId>
+        <artifactId>jflex</artifactId>
+        <version>1.4.3</version>
+      <type>jar</type>
+    </dependency>
+
+    <!-- Java CUP (versión moderna en Maven) -->
+    <dependency>
+        <groupId>com.github.vbmacher</groupId>
+        <artifactId>java-cup</artifactId>
+        <version>11b-20160615</version>
+    </dependency>
+
+</dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
