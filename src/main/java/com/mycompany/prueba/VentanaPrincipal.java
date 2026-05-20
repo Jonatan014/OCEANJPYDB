@@ -24,7 +24,7 @@ public class VentanaPrincipal extends JFrame {
     private AnalizadorSemantico as = new AnalizadorSemantico();
 
     public VentanaPrincipal() {
-        setTitle("OceanJpy++#DBjsNativeShell on rails");
+        setTitle("myOceanJDBpyJS#++ on rails orlando estuvo aqui --ANUNCIESE AQUI-- este es un anuncio NO pagado (Pollos Garcia, los mas mejores pollos a la leña de todo el estado numero: 951 525 8293)");
         setSize(900, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -110,7 +110,7 @@ public class VentanaPrincipal extends JFrame {
             ArrayList<Token> tokens = al.analizar(codigo);
 
             DefaultTableModel modelo = new DefaultTableModel();
-            modelo.addColumn("Tipo");
+            modelo.addColumn("Token");
             modelo.addColumn("Lexema");
             modelo.addColumn("Patrón");
             modelo.addColumn("Reservada");
@@ -135,10 +135,14 @@ public class VentanaPrincipal extends JFrame {
     }
     private String obtenerPatron(Token t) {
         switch (t.tipo) {
-            case "TIPO_DATO": return "Trucha|Camaron|Salmon";
-            case "IDENTIFICADOR": return "[a-zA-Z][a-zA-Z0-9]*";
-            case "NUMERO": return "\\d+(\\.\\d+)?";
-            case "STRING": return "\".*\"";
+            case "TIPO_DATO": return "trucha|camaron|salmon";
+            case "IDENTIFICADOR": return "([a-zA-Z][a-zA-Z0-9])*";
+            case "NUMERO": return  """
+            camaron: \\(d[1,10])*
+            salmon: \\d[1,10]\\.\\d[1,8]
+            """;
+            case "STRING": return "^[a-zA-Z0-9]+$" +
+"";
             case "OPERADOR": return "[~<>$%]";
             case "DELIMITADOR": return "[();]";
             case "PALABRA_RESERVADA": return "mostrar";
