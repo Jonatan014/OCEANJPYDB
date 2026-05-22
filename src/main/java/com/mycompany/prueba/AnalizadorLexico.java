@@ -1,144 +1,125 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.prueba;
-
-/**
- *
- * @author jarqu
- */
-
+ 
 import java.util.ArrayList;
-
+ 
 public class AnalizadorLexico {
-
+ 
     private ArrayList<Token> tokens = new ArrayList<>();
     private int linea = 1;
-
+ 
     public ArrayList<Token> analizar(String codigo) throws ErrorLexico {
-
         tokens.clear();
         linea = 1;
-
+ 
         for (int i = 0; i < codigo.length(); i++) {
             char c = codigo.charAt(i);
-
-            if (c == '\n') {
-                linea++;
-                continue;
-            }
-
+ 
+            // Salto de línea
+            if (c == '\n') { linea++; continue; }
             if (Character.isWhitespace(c)) continue;
-            
+ 
             // Comentarios de una línea //
-            if (c == '/' && i + 1 < codigo.length() &&
-                codigo.charAt(i + 1) == '/') {
-
-                while (i < codigo.length() &&
-                       codigo.charAt(i) != '\n') {
-                    i++;
-                }
-
+            if (c == '/' && i + 1 < codigo.length() && codigo.charAt(i + 1) == '/') {
+                while (i < codigo.length() && codigo.charAt(i) != '\n') i++;
                 linea++;
                 continue;
             }
-
+ 
+            // Palabras: tipos, reservadas, identificadores
             if (Character.isLetter(c)) {
                 String lexema = "";
-
-                while (i < codigo.length() &&
-                       Character.isLetterOrDigit(codigo.charAt(i))) {
+                while (i < codigo.length() && Character.isLetterOrDigit(codigo.charAt(i))) {
                     lexema += codigo.charAt(i);
                     i++;
                 }
                 i--;
-
-                if (lexema.equals("trucha") ||
-                    lexema.equals("camaron") ||
-                    lexema.equals("salmon")) {
-
-                    tokens.add(new Token("TIPO_DATO", lexema, linea));
-
-                } else if (lexema.equals("mostrar")) {
-
-                    tokens.add(new Token("PALABRA_RESERVADA", lexema, linea));
-
-                } else {
-
-                    tokens.add(new Token("IDENTIFICADOR", lexema, linea));
+ 
+                switch (lexema) {
+                    case "trucha":
+                    case "camaron":
+                    case "salmon":
+                        tokens.add(new Token("TIPO_DATO", lexema, linea));
+                        break;
+                    case "mostrar":
+                    case "ancla":    // if
+                    case "red":      // else
+                        tokens.add(new Token("PALABRA_RESERVADA", lexema, linea));
+                        break;
+                    default:
+                        tokens.add(new Token("IDENTIFICADOR", lexema, linea));
                 }
+                continue;
             }
-
-            
-            else if (Character.isDigit(c)) {
+ 
+            // Números enteros y decimales
+            if (Character.isDigit(c)) {
                 String numero = "";
                 boolean decimal = false;
-
                 while (i < codigo.length()) {
                     char actual = codigo.charAt(i);
-
                     if (Character.isDigit(actual)) {
                         numero += actual;
-                    }
-                    else if (actual == '.' && !decimal) {
+                    } else if (actual == '.' && !decimal) {
                         decimal = true;
                         numero += actual;
-                    }
-                    else break;
-
+                    } else break;
                     i++;
                 }
                 i--;
-
                 tokens.add(new Token("NUMERO", numero, linea));
+                continue;
             }
-
-            
-            else if (c == '"') {
+ 
+            // Strings entre comillas dobles
+            if (c == '"') {
                 String texto = "";
                 i++;
-
                 while (i < codigo.length() && codigo.charAt(i) != '"') {
                     texto += codigo.charAt(i);
                     i++;
                 }
-
                 tokens.add(new Token("STRING", texto, linea));
+                continue;
             }
-
-            else if (c == '~') {
+ 
+            // ── Operadores de dos caracteres (prefijo ~) ──────────────────────
+            // ~~ (==)  ~- (<=)  ~+ (>=)   ~ solo → asignación
+            if (c == '~') {
+                if (i + 1 < codigo.length()) {
+                    char sig = codigo.charAt(i + 1);
+                    if (sig == '~') { tokens.add(new Token("COMPARADOR", "~~", linea)); i++; continue; }
+                    if (sig == '-') { tokens.add(new Token("COMPARADOR", "~-", linea)); i++; continue; }
+                    if (sig == '+') { tokens.add(new Token("COMPARADOR", "~+", linea)); i++; continue; }
+                }
                 tokens.add(new Token("OPERADOR", "~", linea));
+                continue;
             }
-            else if (c == '<') {
-                tokens.add(new Token("OPERADOR", "<", linea));
+ 
+            // !~ (!=)
+            if (c == '!' && i + 1 < codigo.length() && codigo.charAt(i + 1) == '~') {
+                tokens.add(new Token("COMPARADOR", "!~", linea)); i++; continue;
             }
-            else if (c == '>') {
-                tokens.add(new Token("OPERADOR", ">", linea));
-            }
-            else if (c == '$') {
-                tokens.add(new Token("OPERADOR", "$", linea));
-            }
-            else if (c == '%') {
-                tokens.add(new Token("OPERADOR", "%", linea));
-            }
-
-            else if (c == ';') {
-                tokens.add(new Token("DELIMITADOR", ";", linea));
-            }
-            
-            else if (c == '(' || c == ')') {
-                tokens.add(new Token("DELIMITADOR", String.valueOf(c), linea));
-            }
-
-            else {
-                throw new ErrorLexico(
-                    "Símbolo no reconocido '" + c +
-                    "' en linea " + linea
-                );
-            }
+ 
+            // ── Operadores aritméticos ────────────────────────────────────────
+            if (c == '<') { tokens.add(new Token("OPERADOR",   "<", linea)); continue; }  // suma
+            if (c == '>') { tokens.add(new Token("OPERADOR",   ">", linea)); continue; }  // resta
+            if (c == '$') { tokens.add(new Token("OPERADOR",   "$", linea)); continue; }  // multiplicación
+            if (c == '%') { tokens.add(new Token("OPERADOR",   "%", linea)); continue; }  // división
+ 
+            // ── Comparadores simples ──────────────────────────────────────────
+            if (c == '-') { tokens.add(new Token("COMPARADOR", "-", linea)); continue; }  // menor que
+            if (c == '+') { tokens.add(new Token("COMPARADOR", "+", linea)); continue; }  // mayor que
+ 
+            // ── Delimitadores ─────────────────────────────────────────────────
+            if (c == ';') { tokens.add(new Token("DELIMITADOR", ";",            linea)); continue; }
+            if (c == '(') { tokens.add(new Token("DELIMITADOR", "(",            linea)); continue; }
+            if (c == ')') { tokens.add(new Token("DELIMITADOR", ")",            linea)); continue; }
+            if (c == '{') { tokens.add(new Token("DELIMITADOR", "{",            linea)); continue; }
+            if (c == '}') { tokens.add(new Token("DELIMITADOR", "}",            linea)); continue; }
+ 
+            throw new ErrorLexico("Símbolo no reconocido '" + c + "' en linea " + linea);
         }
-
+ 
         return tokens;
     }
 }
