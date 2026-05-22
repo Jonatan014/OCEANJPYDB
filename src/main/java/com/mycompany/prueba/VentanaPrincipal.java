@@ -1,13 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.prueba;
-
-/**
- *
- * @author jonat
- */
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -55,30 +46,50 @@ public class VentanaPrincipal extends JFrame {
         === SIMBOLOGÍA DEL LENGUAJE ===
 
         TIPOS DE DATO:
-        trucha  → String (texto)
-        camaron → int (número entero)
-        salmon  → double (decimal)
+          trucha  → String (texto)
+          camaron → int (número entero)
+          salmon  → double (decimal)
 
-        OPERADORES:
-        <  → suma (+)
-        >  → resta (-)
-        ~  → asignación (=)
-        $  → multiplicación (*)
-        %  → división (/)
+        OPERADORES ARITMÉTICOS:
+          <  → suma (+)
+          >  → resta (-)
+          ~  → asignación (=)
+          $  → multiplicación (*)
+          %  → división (/)
 
-        PALABRA RESERVADA:
-        mostrar → imprime el valor de una variable
+        OPERADORES DE COMPARACIÓN:
+          ~~ → igual a      (==)
+          !~ → diferente de (!=)
+          ~- → menor igual  (<=)
+          ~+ → mayor igual  (>=)
+          -  → menor que    (<)
+          +  → mayor que    (>)
 
-        EJEMPLO:
-        salmon p1 ~ 5.0;
-        salmon p2 ~ 3.0;
-        salmon r ~ p1 < p2;
-        mostrar(r);
+        PALABRAS RESERVADAS:
+          mostrar → imprime el valor de una variable
+          ancla   → condicional if
+          red     → alternativa else
+
+        EJEMPLO BÁSICO:
+          salmon p1 ~ 5.0;
+          salmon p2 ~ 3.0;
+          salmon r ~ p1 < p2;
+          mostrar(r);
+
+        EJEMPLO CON ANCLA / RED:
+          camaron edad ~ 18;
+          ancla(edad ~~ 18) {
+            camaron x ~ 1;
+            mostrar(x);
+          } red {
+            camaron y ~ 0;
+            mostrar(y);
+          }
         """);
 
         JScrollPane scrollAyuda = new JScrollPane(txtAyuda);
         scrollAyuda.setBorder(BorderFactory.createTitledBorder("Ayuda / Lenguaje"));
-        scrollAyuda.setPreferredSize(new Dimension(400, 150));
+        scrollAyuda.setPreferredSize(new Dimension(400, 200));
 
         panelTabla.add(scrollAyuda, BorderLayout.SOUTH);
 
@@ -133,30 +144,31 @@ public class VentanaPrincipal extends JFrame {
             txtResultados.setText(ex.getMessage());
         }
     }
+
     private String obtenerPatron(Token t) {
         switch (t.tipo) {
-            case "TIPO_DATO": return "trucha|camaron|salmon";
-            case "IDENTIFICADOR": return "([a-zA-Z][a-zA-Z0-9])*";
-            case "NUMERO": return  """
-            camaron: \\(d[1,10])*
-            salmon: \\d[1,10]\\.\\d[1,8]
-            """;
-            case "STRING": return "^[a-zA-Z0-9]+$" +
-"";
-            case "OPERADOR": return "[~<>$%]";
-            case "DELIMITADOR": return "[();]";
-            case "PALABRA_RESERVADA": return "mostrar";
-            default: return "Desconocido";
+            case "TIPO_DATO":        return "trucha|camaron|salmon";
+            case "IDENTIFICADOR":    return "([a-zA-Z][a-zA-Z0-9])*";
+            case "NUMERO":           return "camaron: \\d{1,10}\ncamaron: \\d{1,10}\\.\\d{1,8}";
+            case "STRING":           return "\"[a-zA-Z0-9 ]*\"";
+            case "OPERADOR":         return "[~<>$%]";
+            case "COMPARADOR":       return "~~|!~|~-|~+|-|+";
+            case "DELIMITADOR":      return "[();{}]";
+            case "PALABRA_RESERVADA": return "mostrar|ancla|red";
+            default:                 return "Desconocido";
         }
     }
-    private String esReservada(Token t) {
-        if (t.tipo.equals("PALABRA_RESERVADA") ||
-            t.tipo.equals("TIPO_DATO") ||
-            t.tipo.equals("OPERADOR") ||
-            t.tipo.equals("DELIMITADOR")) {
 
-            return "Sí";
+    private String esReservada(Token t) {
+        switch (t.tipo) {
+            case "PALABRA_RESERVADA":
+            case "TIPO_DATO":
+            case "OPERADOR":
+            case "COMPARADOR":
+            case "DELIMITADOR":
+                return "Sí";
+            default:
+                return "No";
         }
-        return "No";
     }
 }
