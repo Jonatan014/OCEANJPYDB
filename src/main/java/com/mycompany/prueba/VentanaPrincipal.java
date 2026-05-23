@@ -129,15 +129,17 @@ public class VentanaPrincipal extends JFrame {
             modelo.addColumn("Lexema");
             modelo.addColumn("Patrón");
             modelo.addColumn("Reservada");
- 
+            modelo.addColumn("Token");
+
             for (Token t : tokens) {
                 modelo.addRow(new Object[]{
-                    t.tipo,
-                    t.lexema,
-                    obtenerPatron(t),
-                    esReservada(t)
-                });
-            }
+                t.tipo,
+                t.lexema,
+                obtenerPatron(t),
+                esReservada(t),
+                t.lexema
+            });
+}
             tablaTokens.setModel(modelo);
  
             String resultado = as.analizar(tokens);
@@ -170,55 +172,55 @@ public class VentanaPrincipal extends JFrame {
  
     // ── Patrón por tipo de token ──────────────────────────────────────────────
     private String obtenerPatron(Token t) {
-        switch (t.tipo) {
-            case "TIPO_DATO":
-                switch (t.lexema) {
-                    case "trucha":  return "Texto entre comillas";
-                    case "camaron": return "Entero máximo 10 dígitos";
-                    case "salmon":  return "Decimal obligatorio (#.#) máximo 8 decimales";
-                }
-                break;
-            case "IDENTIFICADOR":    return "[a-zA-Z][a-zA-Z0-9]{0,9}";
-            case "NUMERO":           return "camaron: \\d{1,10} | salmon: \\d{1,10}\\.\\d{1,8}";
-            case "STRING":           return "\"texto\"";
-            case "OPERADOR":
-                switch (t.lexema) {
-                    case "<": return "Suma / Concatenación";
-                    case ">": return "Resta";
-                    case "~": return "Asignación";
-                    case "$": return "Multiplicación";
-                    case "%": return "División";
-                }
-                break;
-            case "COMPARADOR":
-                switch (t.lexema) {
-                    case "~~": return "Igual a (==)";
-                    case "!~": return "Diferente de (!=)";
-                    case "~-": return "Menor o igual (<=)";
-                    case "~+": return "Mayor o igual (>=)";
-                    case "-":  return "Menor que (<)";
-                    case "+":  return "Mayor que (>)";
-                }
-                break;
-            case "DELIMITADOR":
-                switch (t.lexema) {
-                    case ";": return "Fin de instrucción";
-                    case "(": return "Inicio agrupación";
-                    case ")": return "Fin agrupación";
-                    case "{": return "Inicio bloque";
-                    case "}": return "Fin bloque";
-                }
-                break;
-            case "PALABRA_RESERVADA":
-                switch (t.lexema) {
-                    case "mostrar": return "mostrar(variable);";
-                    case "ancla":   return "ancla(condicion) { }";
-                    case "red":     return "red { }";
-                }
-                break;
-        }
-        return "Desconocido";
+    switch (t.tipo) {
+        case "TIPO_DATO":
+            switch (t.lexema) {
+                case "trucha":  return "[a-zA-Z][a-zA-Z0-9]{0,9}\\s+trucha\\s*~\\s*\"[^\"]*\"";
+                case "camaron": return "[a-zA-Z][a-zA-Z0-9]{0,9}\\s+camaron\\s*~\\s*-?\\d{1,10}";
+                case "salmon":  return "[a-zA-Z][a-zA-Z0-9]{0,9}\\s+salmon\\s*~\\s*\\d{1,10}\\.\\d{1,8}";
+            }
+            break;
+        case "IDENTIFICADOR":    return "[a-zA-Z][a-zA-Z0-9]{0,9}";
+        case "NUMERO":           return "\\d{1,10}(\\.\\d{1,8})?";
+        case "STRING":           return "\"[^\"]*\"";
+        case "OPERADOR":
+            switch (t.lexema) {
+                case "<": return "[<]";
+                case ">": return "[>]";
+                case "~": return "[~]";
+                case "$": return "\\$";
+                case "%": return "[%]";
+            }
+            break;
+        case "COMPARADOR":
+            switch (t.lexema) {
+                case "~~": return "~~";
+                case "!~": return "!~";
+                case "~-": return "~-";
+                case "~+": return "~\\+";
+                case "-":  return "-";
+                case "+":  return "\\+";
+            }
+            break;
+        case "DELIMITADOR":
+            switch (t.lexema) {
+                case ";": return ";";
+                case "(": return "\\(";
+                case ")": return "\\)";
+                case "{": return "\\{";
+                case "}": return "\\}";
+            }
+            break;
+        case "PALABRA_RESERVADA":
+            switch (t.lexema) {
+                case "mostrar": return "mostrar\\([a-zA-Z][a-zA-Z0-9]{0,9}\\);";
+                case "ancla":   return "ancla\\(.+\\)\\s*\\{[^}]*\\}";
+                case "red":     return "red\\s*\\{[^}]*\\}";
+            }
+            break;
     }
+    return "Desconocido";
+}
  
     private String esReservada(Token t) {
         switch (t.tipo) {
